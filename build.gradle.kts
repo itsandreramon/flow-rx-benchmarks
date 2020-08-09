@@ -19,6 +19,9 @@ dependencies {
     implementation("org.openjdk.jmh:jmh-generator-annprocess:1.19")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.8")
     implementation("io.reactivex.rxjava2:rxjava:2.1.9")
+    implementation("com.github.akarnokd:rxjava2-extensions:+") {
+        exclude(group = "io.reactivex.rxjava2", module = "rxjava")
+    }
 }
 
 java {
@@ -40,5 +43,7 @@ tasks {
     withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
         kotlinOptions.freeCompilerArgs += "-Xjvm-default=enable"
+        kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+        kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.ExperimentalTypeInference"
     }
 }
