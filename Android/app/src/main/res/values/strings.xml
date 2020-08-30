@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Demo App</string>
+    <string name="took_ms">Run %1$d took: %2$dms</string>
+    <string name="average_ms">Average of last %1$d runs: %2$dms</string>
+    <string name="fragment_flow_title">Flow</string>
+    <string name="fragment_rx_title">RxJava</string>
+    <string name="start">Start</string>
+</resources>
