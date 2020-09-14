@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.flow.zip
 
 
-class FlowFragment private constructor(): Fragment() {
+class FlowFragment : Fragment() {
 
     private val logger = Logger()
 

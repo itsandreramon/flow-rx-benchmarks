@@ -2,7 +2,11 @@ package com.andreramon.demo.ui
 
 import android.util.Log
 import android.view.View
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import autodispose2.androidx.lifecycle.autoDispose
 import com.andreramon.demo.util.Logger
 import com.andreramon.demo.util.RANGE
 import com.andreramon.demo.util.RUN_ITERATIONS
@@ -19,7 +23,7 @@ import java.util.concurrent.TimeUnit
 
 class RxViewModel : ViewModel() {
 
-    private val threadPool = Executors.newFixedThreadPool(4)
+    private val threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1)
 
     private val logger = Logger()
 
@@ -53,7 +57,7 @@ class RxViewModel : ViewModel() {
             .filter { it.isNotEmpty() }
             .map { results ->
                 results
-                    .reduce { sum, element -> sum + element }
+                    .reduce { sum, e -> sum + e }
                     .div(RUN_ITERATIONS - WARM_UP_RUNS)
             }
     }
@@ -71,6 +75,7 @@ class RxViewModel : ViewModel() {
                 var endTime = 0L
 
                 Flowable.fromIterable(0..RANGE)
+                    .observeOn(AndroidSchedulers.mainThread())
                     .flatMap { stubFunction(it) }
                     .doOnNext {
                         logger.log(TAG, "run $run : range $it")
@@ -81,7 +86,7 @@ class RxViewModel : ViewModel() {
                         endTime = System.currentTimeMillis()
                         _timeCurrentRun.onNext(endTime - startTime)
                         intermediateResults[_currentRun.value] = _timeCurrentRun.value
-                    }.subscribeOn(Schedulers.from(threadPool))
+                    }
             }.doOnComplete {
                 _results.onNext(intermediateResults)
                 _progressIndicator.onNext(View.INVISIBLE)
@@ -92,7 +97,7 @@ class RxViewModel : ViewModel() {
     }
 
     private fun stubFunction(iteration: Long): Flowable<Long> {
-        return Flowable.just(iteration)
+        return Flowable.just(iteration).delay(100, TimeUnit.MILLISECONDS)
     }
 
     override fun onCleared() {

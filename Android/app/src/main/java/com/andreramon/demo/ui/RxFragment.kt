@@ -15,7 +15,7 @@ import com.andreramon.demo.util.WARM_UP_RUNS
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import java.util.concurrent.TimeUnit
 
-class RxFragment private constructor() : Fragment() {
+class RxFragment : Fragment() {
 
     private val logger = Logger()
 

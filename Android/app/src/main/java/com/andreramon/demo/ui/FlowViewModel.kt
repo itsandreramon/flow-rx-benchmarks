@@ -14,7 +14,7 @@ import kotlin.system.measureTimeMillis
 
 class FlowViewModel : ViewModel() {
 
-    private val threadPool = Executors.newFixedThreadPool(4)
+    private val threadPool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1)
 
     private val logger = Logger()
 
@@ -77,7 +77,7 @@ class FlowViewModel : ViewModel() {
                         _timeCurrentRun.value = endTime - startTime
                         intermediateResults[_currentRun.value] = _timeCurrentRun.value
                     }
-                    .flowOn(threadPool.asCoroutineDispatcher())
+                    //.flowOn(threadPool.asCoroutineDispatcher())
             }.onCompletion {
                 _results.value = intermediateResults
                 _progressIndicator.value = View.INVISIBLE
@@ -85,7 +85,7 @@ class FlowViewModel : ViewModel() {
             .launchIn(viewModelScope)
     }
 
-    private fun stubFunction(iteration: Long) = flowOf(iteration)
+    private fun stubFunction(iteration: Long) = flowOf(iteration).onEach { delay(100) }
 
     companion object {
         private const val TAG = "FlowViewModel"
